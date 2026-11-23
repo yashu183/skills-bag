@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: skip-preview-fast-path
+context:
+  scaffold_script: place-files.sh
+expected_outcome: |
+  The agent edits src/components/PricingCard.tsx directly: the button gets rounded-full and w-full (replacing rounded-md), with no other changes. No mock preview is created and no .ui-tweak/pending flag is left behind.

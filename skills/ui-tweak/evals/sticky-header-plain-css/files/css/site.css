@@ -1,0 +1,17 @@
+:root {
+  --c-bg: #fbf7f2;
+  --c-ink: #2b2118;
+  --c-accent: #b4532a;
+  --c-line: #e7ddd1;
+  --font-body: "Source Sans 3", sans-serif;
+  --font-display: "Fraunces", serif;
+  --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-6: 24px;
+}
+body { margin: 0; background: var(--c-bg); color: var(--c-ink); font-family: var(--font-body); }
+.site-header { display: flex; justify-content: space-between; align-items: center; padding: var(--space-6); border-bottom: 1px solid var(--c-line); }
+.logo { font-family: var(--font-display); font-size: 22px; color: var(--c-ink); text-decoration: none; }
+.nav { display: flex; gap: var(--space-6); }
+.nav a { color: var(--c-ink); text-decoration: none; }
+.nav-cta { background: var(--c-accent); color: #fff !important; padding: var(--space-2) var(--space-4); border-radius: 999px; }
+.hero { padding: 96px var(--space-6); }
+.hero h1 { font-family: var(--font-display); font-size: 48px; margin: 0 0 var(--space-3); }

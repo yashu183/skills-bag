@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ui-tweak preview. Saved as .ui-tweak/<slug>/vN.html. Replace every {{PLACEHOLDER}}. Controls must be the app's own components (run scripts/check_native.py). Put the APP's styles in the
+     "APP STYLES" block; the preview chrome uses only the .pv-* classes below. -->
+<title>{{TWEAK_TITLE}}</title>
+
+<!-- Optional: app fonts / Tailwind CDN + theme (see references/mock-fidelity.md) -->
+
+<style>
+  /* ---------- preview chrome (leave alone) ---------- */
+  :root { --pv-bg:#f4f4f5; --pv-fg:#18181b; --pv-muted:#71717a; --pv-line:#d4d4d8; --pv-accent:#2563eb; --pv-card:#fff; }
+  @media (prefers-color-scheme: dark) {
+    :root { --pv-bg:#111113; --pv-fg:#f4f4f5; --pv-muted:#a1a1aa; --pv-line:#3f3f46; --pv-accent:#60a5fa; --pv-card:#1c1c1f; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--pv-bg); color:var(--pv-fg); font:14px/1.5 system-ui, -apple-system, sans-serif; }
+  .pv-head { padding:16px 20px; border-bottom:1px solid var(--pv-line); display:flex; flex-wrap:wrap; gap:12px 24px; align-items:center; }
+  .pv-head h1 { font-size:16px; margin:0; }
+  .pv-head p { margin:0; color:var(--pv-muted); flex-basis:100%; }
+  .pv-bar { display:flex; gap:6px; flex-wrap:wrap; }
+  .pv-btn { border:1px solid var(--pv-line); background:var(--pv-card); color:var(--pv-fg); border-radius:6px; padding:4px 10px; font:inherit; font-size:12px; cursor:pointer; }
+  .pv-btn[aria-pressed="true"] { border-color:var(--pv-accent); color:var(--pv-accent); font-weight:600; }
+  .pv-stage { display:grid; gap:20px; padding:20px; grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--pv-w, 1280px)), 1fr)); }
+  .pv-stage.pv-stacked { grid-template-columns: 1fr; }
+  .pv-col { min-width:0; }
+  .pv-label { font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:var(--pv-muted); margin:0 0 8px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .pv-frame { width:100%; max-width:var(--pv-w, 1280px); margin:0 auto; border:1px solid var(--pv-line); border-radius:8px; overflow:auto; container-type:inline-size; }
+  .pv-option { display:none; } .pv-option.pv-on { display:block; }
+  .pv-notes { padding:0 20px 32px; display:grid; gap:16px; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); }
+  .pv-notes section { background:var(--pv-card); border:1px solid var(--pv-line); border-radius:8px; padding:12px 16px; }
+  .pv-notes h2 { font-size:13px; margin:0 0 6px; }
+  .pv-notes ul { margin:0; padding-left:18px; }
+
+  /* ---------- APP STYLES: paste the app's real tokens + component CSS here ----------
+     Scope them under .app so they never leak into the chrome.
+     Dark theme: .app[data-theme="dark"] { --token: … }                           */
+  .app { /* --color-primary: …; font-family: …; background: …; */ }
+</style>
+</head>
+<body>
+<header class="pv-head">
+  <h1>{{TWEAK_TITLE}}</h1>
+  <div class="pv-bar" role="group" aria-label="Viewport width">
+    <button class="pv-btn" data-w="360">360</button>
+    <button class="pv-btn" data-w="768">768</button>
+    <button class="pv-btn" data-w="1280" aria-pressed="true">1280</button>
+  </div>
+  <div class="pv-bar">
+    <button class="pv-btn" id="pv-theme" aria-pressed="false">Dark theme</button>
+    <button class="pv-btn" id="pv-layout" aria-pressed="false">Stack panels</button>
+  </div>
+  <p>{{ONE_LINE_REQUEST}}</p>
+</header>
+
+<main class="pv-stage" id="pv-stage">
+  <div class="pv-col">
+    <p class="pv-label">Current</p>
+    <div class="pv-frame">
+      <div class="app">
+        {{CURRENT_UI}}
+      </div>
+    </div>
+  </div>
+
+  <div class="pv-col">
+    <p class="pv-label">Proposed
+      <!-- One button per option. Delete the bar if there is only one option. -->
+      <span class="pv-bar" id="pv-tabs">
+        <button class="pv-btn" data-opt="A" aria-pressed="true">A · {{OPTION_A_NAME}}</button>
+        <button class="pv-btn" data-opt="B">B · {{OPTION_B_NAME}}</button>
+      </span>
+    </p>
+    <div class="pv-frame">
+      <div class="app pv-option pv-on" data-opt="A">
+        {{PROPOSED_UI_A}}
+      </div>
+      <div class="app pv-option" data-opt="B">
+        {{PROPOSED_UI_B}}
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="pv-notes">
+  <section>
+    <h2>What changes</h2>
+    <ul>
+      <li>{{CHANGE_1, e.g. CTA becomes full-width (w-full), radius 8 → 12px (--radius-lg)}}</li>
+    </ul>
+  </section>
+  <section>
+    <h2>Not shown in the mock</h2>
+    <ul>
+      <li>{{LIMITATION, e.g. hover animation, real data, or "none"}}</li>
+    </ul>
+  </section>
+  <section>
+    <h2>Changelog</h2>
+    <ul>
+      <li>v1: first proposal.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+  const stage = document.getElementById('pv-stage');
+  document.querySelectorAll('[data-w]').forEach(b => b.onclick = () => {
+    document.querySelectorAll('[data-w]').forEach(x => x.setAttribute('aria-pressed', x === b));
+    document.documentElement.style.setProperty('--pv-w', b.dataset.w + 'px');
+  });
+  const theme = document.getElementById('pv-theme');
+  theme.onclick = () => {
+    const on = theme.getAttribute('aria-pressed') !== 'true';
+    theme.setAttribute('aria-pressed', on);
+    document.querySelectorAll('.app').forEach(a => on ? a.setAttribute('data-theme', 'dark') : a.removeAttribute('data-theme'));
+  };
+  const layout = document.getElementById('pv-layout');
+  layout.onclick = () => {
+    const on = layout.getAttribute('aria-pressed') !== 'true';
+    layout.setAttribute('aria-pressed', on);
+    stage.classList.toggle('pv-stacked', on);
+  };
+  document.querySelectorAll('[data-opt]').forEach(b => { if (b.tagName === 'BUTTON') b.onclick = () => {
+    document.querySelectorAll('button[data-opt]').forEach(x => x.setAttribute('aria-pressed', x === b));
+    document.querySelectorAll('.pv-option').forEach(o => o.classList.toggle('pv-on', o.dataset.opt === b.dataset.opt));
+  }; });
+</script>
+</body>
+</html>
