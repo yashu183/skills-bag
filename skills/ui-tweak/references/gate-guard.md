@@ -1,5 +1,7 @@
 # Optional: enforce the approval gate with a hook
 
+This hook is **Claude Code only** (it uses Claude Code's `PreToolUse` hook API and `settings.json`). In other agents, skip it: the gate relies on the instructions in `SKILL.md`.
+
 A skill is instructions; the model usually follows them, but nothing *forces* it. If the user wants a hard guarantee that app source isn't edited while a mock is under review, install the PreToolUse hook in `scripts/ui-tweak-guard.sh`.
 
 How it works:

@@ -1,6 +1,8 @@
 # skills-bag
 
-Agent skills I build and use with Claude Code. Each one lives in `skills/<name>/` and installs on its own.
+Agent skills I build and use. Each one lives in `skills/<name>/` and installs on its own.
+
+They use the open [Agent Skills](https://agentskills.io) format (a `SKILL.md` plus plain scripts), so they work in any coding agent that supports skills: Claude Code, Codex, Cursor, GitHub Copilot, Gemini CLI and others. Anything agent-specific, like a Claude Code hook, is optional and called out in that skill's README.
 
 | Skill | What it does |
 |---|---|
@@ -11,17 +13,19 @@ Agent skills I build and use with Claude Code. Each one lives in `skills/<name>/
 With the [`skills`](https://github.com/vercel-labs/skills) CLI (needs Node.js):
 
 ```bash
-# one skill, for Claude Code, in every project
-npx skills add https://github.com/yashu183/skills-bag --skill ui-tweak -a claude-code -g
+# one skill, in every project; asks which agents to install for
+npx skills add https://github.com/yashu183/skills-bag --skill ui-tweak -g
 ```
 
 - `--skill <name>` picks one skill from this repo. Leave it out to choose from a list.
-- `-a claude-code` installs for Claude Code only. Leave it out to pick agents (Cursor, Codex, …).
+- `-a <agent>` skips the agent picker, e.g. `-a claude-code`. Leave it out to pick agents (Claude Code, Cursor, Codex, …).
 - `-g` makes it available in all your projects. Without it, the skill is installed in the current project only.
 
-Then start a new Claude Code session and type `/skills` to check it's there.
+Then start a new session in your agent. In Claude Code, type `/skills` to check it's there.
 
 ### Without npx
+
+Copy or symlink the skill folder into your agent's skills folder (check its docs for the path). For Claude Code:
 
 ```bash
 git clone https://github.com/yashu183/skills-bag.git
@@ -33,7 +37,7 @@ A symlink keeps you on the latest version with `git pull`; a copy stays as it is
 
 ### Extra setup per skill
 
-Some skills have optional pieces the installers can't set up, such as a hook in `settings.json`. Each skill's README says what they are. For ui-tweak, see [its README](skills/ui-tweak/README.md#2-the-guard-hook-optional).
+Some skills have optional pieces the installers can't set up, such as a Claude Code hook in `settings.json`. Each skill's README says what they are. For ui-tweak, see [its README](skills/ui-tweak/README.md#2-the-guard-hook-optional-claude-code-only).
 
 ## Layout
 
