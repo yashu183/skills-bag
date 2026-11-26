@@ -14,8 +14,10 @@ With the [`skills`](https://github.com/vercel-labs/skills) CLI (needs Node.js):
 
 ```bash
 # one skill, in every project; asks which agents to install for
-npx skills add https://github.com/yashu183/skills-bag --skill ui-tweak -g
+npx skills@1.9.0 add https://github.com/yashu183/skills-bag --skill ui-tweak -g
 ```
+
+The `skills` CLI is pinned to a version you can check, rather than whatever is latest on npm. Bump it when you want a newer one.
 
 - `--skill <name>` picks one skill from this repo. Leave it out to choose from a list.
 - `-a <agent>` skips the agent picker, e.g. `-a claude-code`. Leave it out to pick agents (Claude Code, Cursor, Codex, …).
@@ -37,7 +39,16 @@ A symlink keeps you on the latest version with `git pull`; a copy stays as it is
 
 ### Extra setup per skill
 
-Some skills have optional pieces the installers can't set up, such as a Claude Code hook in `settings.json`. Each skill's README says what they are. For ui-tweak, see [its README](skills/ui-tweak/README.md#2-the-guard-hook-optional-claude-code-only).
+Some skills have optional pieces the installers can't set up, such as a Claude Code hook in `settings.json`. They're documented in `docs/`. For ui-tweak: [the guard hook](docs/ui-tweak-guard.md) (Claude Code only).
+
+## Update / uninstall
+
+```bash
+npx skills@1.9.0 update ui-tweak     # installed with npx
+npx skills@1.9.0 remove ui-tweak
+
+rm -rf ~/.claude/skills/ui-tweak     # installed by hand into Claude Code (for a symlink this removes only the link)
+```
 
 ## Layout
 
@@ -50,4 +61,7 @@ skills/
     scripts/        code the agent runs
     assets/         files the agent copies into its output
     evals/          test cases for the skill (skill-creator / `claude plugin eval` format)
+docs/               setup guides for optional, agent-specific extras (e.g. hooks)
 ```
+
+Everything inside `skills/<name>/` gets installed. Agent-config setup (hooks, `settings.json`) lives in `docs/` instead, so the skill itself never tells an agent to touch its own config.

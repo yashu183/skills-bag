@@ -2,7 +2,7 @@
 
 An agent skill for UI changes: **preview first, code later**.
 
-It uses the open [Agent Skills](https://agentskills.io) format (`SKILL.md` + plain Python scripts), so it works in any coding agent that supports skills: Claude Code, Codex, Cursor, GitHub Copilot, Gemini CLI and others. The one exception is the optional [guard hook](#2-the-guard-hook-optional-claude-code-only), which is Claude Code-only.
+It uses the open [Agent Skills](https://agentskills.io) format (`SKILL.md` + plain Python scripts), so it works in any coding agent that supports skills: Claude Code, Codex, Cursor, GitHub Copilot, Gemini CLI and others. The one exception is the optional [guard hook](#optional-the-guard-hook-claude-code-only), which is Claude Code-only.
 
 When you ask for a UI tweak or a redesign, the agent doesn't touch your code. It builds an HTML mock of the screen (your current UI next to the proposed change, using your app's real styles and components), serves it on a live-reload local server, and iterates with you, one version per round of feedback. Your source code changes only when you say **implement**.
 
@@ -22,7 +22,7 @@ ui-tweak/
 ├── README.md                 this file (for humans; the agent doesn't need it)
 ├── references/
 │   ├── mock-fidelity.md      where each stack keeps its styles, component inventory, Tailwind CDN snippets
-│   └── gate-guard.md         the optional hook (Claude Code only): what it does, how to install it
+│   └── gate-guard.md         the optional hook (Claude Code only): what it does, the escape hatch
 ├── scripts/
 │   ├── serve.py              live-reload preview server for .ui-tweak/ (port 4517+)
 │   ├── check_native.py       fails if a mock uses browser-default controls instead of in-app ones
@@ -39,54 +39,13 @@ ui-tweak/
 
 ## Install
 
-### 1. The skill
+See the [repo README](../../README.md#install) for installing with the `skills` CLI or by hand.
 
-**With npx** (needs Node.js):
+### Optional: the guard hook (Claude Code only)
 
-```bash
-npx skills add https://github.com/yashu183/skills-bag --skill ui-tweak -g
-```
+A Claude Code hook that blocks source edits while a mock is under review. Setup: [docs/ui-tweak-guard.md](../../docs/ui-tweak-guard.md).
 
-It asks which agents to install for and puts the skill in each one's skills folder. `-g` installs it for every project; leave it out to install into the current project only. To skip the picker, name the agent, e.g. `-a claude-code`.
-
-**Or by hand.** Copy or symlink the `ui-tweak` folder into your agent's skills folder (check its docs for the path). For Claude Code that's `~/.claude/skills/` (every project) or `<project>/.claude/skills/` (one project):
-
-```bash
-git clone https://github.com/yashu183/skills-bag.git
-mkdir -p ~/.claude/skills
-
-# copy (stays as it is)…
-cp -R skills-bag/skills/ui-tweak ~/.claude/skills/
-# …or symlink (git pull updates it)
-ln -s "$PWD/skills-bag/skills/ui-tweak" ~/.claude/skills/ui-tweak
-```
-
-If the scripts lost their executable bit on the way, run `chmod +x <skills-folder>/ui-tweak/scripts/*` (the agent calls them with `python3`, so this only matters for the hook).
-
-Start a new agent session so it picks up the skill. In Claude Code, type `/skills` (it should be listed) or `/ui-tweak`; in other agents, use their skills list or just ask for a UI change.
-
-### 2. The guard hook (optional, Claude Code only)
-
-Without the hook, "don't edit code before approval" is an instruction the agent usually follows. With it, Claude Code blocks the edit. The hook uses Claude Code's `PreToolUse` hook API, so other agents ignore it; there the approval gate relies on the instructions alone. Add this to `~/.claude/settings.json` (or `<project>/.claude/settings.json`), merging into any existing `hooks` block:
-
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Edit|Write|MultiEdit",
-        "hooks": [
-          { "type": "command", "command": "~/.claude/skills/ui-tweak/scripts/ui-tweak-guard.sh" }
-        ]
-      }
-    ]
-  }
-}
-```
-
-The hook does nothing unless `<project>/.ui-tweak/pending` exists, so it costs nothing on other work. It doesn't see shell commands (`sed -i`, `cat >`), so it's a guard rail, not a sandbox. To override it mid-review, delete `.ui-tweak/pending`.
-
-### 3. Ignore the mocks in git
+### Ignore the mocks in git
 
 Mocks are written to `<project>/.ui-tweak/`. The agent adds it to `.gitignore` if needed; to do it yourself:
 
@@ -128,13 +87,20 @@ kill "$(python3 -c 'import json;print(json.load(open(".ui-tweak/.server"))["pid"
 
 Every element in a mock (buttons, inputs, search boxes, dropdowns, date pickers, checkboxes, radios, toggles, sliders, tabs, tooltips, modals, everything) must look like **your app's own component**, never the browser default. `check_native.py` enforces this before each version is shown. If your app really has a styled native control (e.g. a checkbox built on `appearance: none`), mark it with `data-in-app="<why>"` and the checker skips it.
 
+## Security scan
+
+Checked with [NVIDIA SkillSpector](https://github.com/NVIDIA/SkillSpector) (static mode, `--no-llm`): no findings.
+
+`SKILL.md` declares its tool scope in `allowed-tools`, and each grant is scoped:
+
+| Grant | Why |
+|---|---|
+| `Read Grep Glob` | read the app's styles and components |
+| `Write(.ui-tweak/**) Edit(.ui-tweak/**)` | write and edit the mocks, **only** inside `.ui-tweak/` |
+| `WebFetch(domain:localhost)` | load the local preview server |
+
+In the Agent Skills format, `allowed-tools` pre-approves tools in the agents that honour it. Because writes and edits are limited to `.ui-tweak/`, edits to your app's source still go through your agent's normal permission prompt, so the approval step stays intact. Tool names and the `Tool(scope)` syntax vary by agent; an agent that doesn't recognise a grant ignores it and asks for permission as usual.
+
 ## Update / uninstall
 
-```bash
-npx skills update ui-tweak            # installed with npx
-npx skills remove ui-tweak
-
-rm -rf <skills-folder>/ui-tweak       # installed by hand (for a symlink this removes only the link)
-```
-
-and, in Claude Code, remove the hook entry from `settings.json` if you added it.
+See the [repo README](../../README.md#update--uninstall). If you added the guard hook, also remove its entry from `settings.json`.

@@ -1,6 +1,7 @@
 ---
 name: ui-tweak
 description: Preview-first workflow for any visual change to an existing app's UI, from a small tweak to a full redesign of a screen or flow. Builds a versioned HTML mock (v1, v2, …) from the app's real styles and in-app components, serves it on a live-reload local server, iterates with the user, and only edits application source after explicit approval ("implement", "ship it", "apply it"). Use this whenever the user asks to tweak, restyle, redesign, revamp, modernise, re-layout, move, resize, recolor or "make it look better" for any part of an existing interface (button, header, card, form, table, modal, nav, settings page, dashboard, onboarding, dark mode, spacing, typography), even if they don't ask for a preview, and when they type /ui-tweak. Not for backend work, brand-new apps from scratch, or pure UI bug fixes with no visual decision to make.
+allowed-tools: Read Grep Glob Write(.ui-tweak/**) Edit(.ui-tweak/**) WebFetch(domain:localhost)
 ---
 
 # UI tweak / redesign: mock → review → implement
