@@ -44,7 +44,7 @@ If the repo uses git and `.ui-tweak/` isn't ignored, add it to `.gitignore`.
 ## Phase 1 — Understand (read-only)
 
 1. Find the component(s) or screen(s) the request touches.
-2. Find the design system, if the app has one: in the repo, in a published package, or in external docs/Figma. Follow `references/design-system.md`. It covers where to look, what to extract (tokens, components, usage rules), and saving a digest to `.ui-tweak/design-system.md`, which later mocks reuse. The design system is the source of truth for every mock.
+2. Find the design system, if the app has one: in the repo or a published package, plus external docs/Figma only when the user names them. Follow `references/design-system.md`. It covers where to look, what to extract (tokens, components, usage rules), and saving a digest to `.ui-tweak/design-system.md`, which later mocks reuse. The design system is the source of truth for every mock.
 3. Find where the rest of the visual language lives: CSS variables, Tailwind config, theme files, fonts, icon set. `references/mock-fidelity.md` says where to look per stack. Read it the first time you work in a repo.
 4. Take the component inventory (above): every element the change shows → the app's component or styling that provides it. With a design system, that's its component and variant.
 5. Restate the request in one line ("Redesign the trial signup form: two columns on desktop, plan picker as cards instead of a dropdown"). Ask a question only if two readings would give visibly different designs. Otherwise pick one and show the other as an option.

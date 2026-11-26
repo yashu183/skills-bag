@@ -22,7 +22,7 @@ ui-tweak/
 ├── README.md                 this file (for humans; the agent doesn't need it)
 ├── references/
 │   ├── mock-fidelity.md      where each stack keeps its styles, component inventory, Tailwind CDN snippets
-│   ├── design-system.md      finding the app's design system (repo, npm package, docs/Figma), the digest, in-system options
+│   ├── design-system.md      finding the app's design system (repo, npm package, docs/Figma you name), the digest, in-system options
 │   └── gate-guard.md         the optional hook (Claude Code only): what it does, the escape hatch
 ├── scripts/
 │   ├── serve.py              live-reload preview server for .ui-tweak/ (port 4517+)
@@ -96,7 +96,7 @@ If your app has a design system, ui-tweak treats it as the source of truth. It f
 
 - **in the repo:** a design doc such as `DESIGN.md` or `design.md` (any letter case, any folder), a `design-system/` or `packages/ui` folder, token JSON, Storybook
 - **in a published package:** e.g. `@acme/ui` in `node_modules`, with its token CSS/JSON and component types
-- **in external docs or Figma:** the agent reads the docs site, or Figma through a connector if your agent has one. Otherwise you export the variables to `.ui-tweak/tokens.json`.
+- **in external docs or Figma, only if you name it:** by default the agent never goes outside your repo, so a private design system stays private. For a public docs site it reads the pages. For a private one (SSO, internal wiki, private Figma) it uses a connector your agent already has; otherwise it asks you to export the tokens to `.ui-tweak/tokens.json` or paste the rules. It never asks for credentials.
 
 To skip the search, tell it where to look ("our design system is `@acme/ui`, docs at design.acme.dev").
 

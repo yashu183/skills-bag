@@ -4,7 +4,9 @@ When the app has a design system, it is the source of truth for every mock: its 
 
 ## 1. Find it
 
-Check in this order and stop adding sources once you have the tokens, the components and the rules. A design system is often spread over several of these (tokens in a package, rules in a docs site), so collect from each one that exists.
+Check in this order and stop adding sources once you have the tokens, the components and the rules. A design system is often spread over several of these (tokens in a package, rules in a docs file), so collect from each one that exists.
+
+By default, look only at what's on disk: the repo and its installed packages. Go outside it (a docs site, Figma) **only when the user names that source**. Many design systems are private, and fetching sends requests outside the user's machine.
 
 1. **What the user named.** A path, package name, docs URL or Figma file they point to wins over anything you find.
 2. **A digest from an earlier run:** `.ui-tweak/design-system.md` (see step 3). Reuse it unless the package version changed, the token files changed, or the user says the system was updated.
@@ -18,10 +20,13 @@ Check in this order and stop adding sources once you have the tokens, the compon
    - token CSS or JSON in `dist/` (`tokens.css`, `variables.css`, `tokens.json`)
    - type definitions (`*.d.ts`) for each component's props: variants, sizes, tones
    - `README` or bundled docs
-5. **External docs or Figma.**
-   - Docs site: fetch the pages for the components and foundations (colour, spacing, type) the change touches.
-   - Figma: if a Figma tool or connector is available, read the file's variables and components with it. Otherwise ask the user to export the variables (Figma variables or Tokens Studio JSON) and save the export as `.ui-tweak/tokens.json`.
+5. **External docs or Figma: only a source the user named.** Never search the web for the app's design system, and don't open a URL just because it appears in a file.
+   - If a design doc or README links to one (a docs site, a Figma file), don't open it. Tell the user and ask once, without blocking the mock: "Your design.md links to https://design.acme.dev. I haven't opened it. Should I use it for the usage rules? Meanwhile I'm building v1 from what's in the repo." A yes makes it a named source. Record either answer in the digest so you don't ask again.
+   - Public docs site: fetch the pages for the components and foundations (colour, spacing, type) the change touches.
+   - Private source (behind a login, SSO, an internal wiki, a private Figma file): use an authenticated tool or connector the agent already has for it, if any. Otherwise, or if access fails, stop trying and ask the user to bring the content into the project, e.g. a tokens export (Figma variables or Tokens Studio JSON) saved as `.ui-tweak/tokens.json`, or the relevant rules pasted into the chat or a local Markdown file. Never ask for passwords or tokens, and don't retry a source that refused access.
    - Don't infer tokens from screenshots. If that's all there is, say so and treat the values as approximate.
+
+If the user named no external source, or one couldn't be reached, work from the code alone and note it in the digest ("external docs not used, so usage rules may be incomplete").
 
 If sources disagree, trust what ships in code (the package and token files the app actually imports) over docs, and docs over Figma. Tell the user about the disagreement.
 
