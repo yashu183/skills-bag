@@ -31,7 +31,7 @@ Before building, list **every** element the mock shows (buttons, inputs, search 
 | Radix / Headless UI / Ark | The app's wrapper components, usually under `components/` or `ui/`. |
 | MUI | `Select`/`Autocomplete`, `DatePicker` (`@mui/x-date-pickers`), `Checkbox`, `Switch`, `Tooltip`, `Dialog`, plus the theme's `components` overrides. |
 | Chakra / Mantine / Ant Design | The library's components plus theme overrides. Mirror their DOM and class names, and take the colours from the theme. |
-| Custom design system | `components/`, `ui/`, `design-system/` or a workspace package such as `packages/ui`. Search for `Select`, `Dropdown`, `DatePicker`, `Calendar`, `Checkbox`, `Toggle`, `Tooltip`, `Modal`, `Toast`. |
+| Custom design system | See `design-system.md` for the full search (repo, published package, docs/Figma). Components usually live in `components/`, `ui/`, `design-system/` or a workspace package such as `packages/ui`. Search for `Select`, `Dropdown`, `DatePicker`, `Calendar`, `Checkbox`, `Toggle`, `Tooltip`, `Modal`, `Toast`. |
 | Plain HTML/CSS sites | The site's CSS for `.select`, `.dropdown`, `.datepicker` etc. If the site truly uses native controls with custom CSS (`appearance: none`), mirror that CSS and mark the element `data-in-app`. |
 
 Quick search: `grep -rliE "button|input|textarea|search|select|dropdown|combobox|datepicker|calendar|checkbox|radio|switch|toggle|slider|upload|tabs|menu|tooltip|popover|dialog|modal|toast|badge|table|pagination" src components app packages 2>/dev/null`

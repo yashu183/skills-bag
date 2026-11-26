@@ -22,14 +22,16 @@ ui-tweak/
 ├── README.md                 this file (for humans; the agent doesn't need it)
 ├── references/
 │   ├── mock-fidelity.md      where each stack keeps its styles, component inventory, Tailwind CDN snippets
+│   ├── design-system.md      finding the app's design system (repo, npm package, docs/Figma), the digest, in-system options
 │   └── gate-guard.md         the optional hook (Claude Code only): what it does, the escape hatch
 ├── scripts/
 │   ├── serve.py              live-reload preview server for .ui-tweak/ (port 4517+)
 │   ├── check_native.py       fails if a mock uses browser-default controls instead of in-app ones
+│   ├── check_tokens.py       fails if the proposed design uses colours/sizes that aren't design-system tokens
 │   └── ui-tweak-guard.sh     optional Claude Code PreToolUse hook: blocks source edits while a mock is under review
 ├── assets/
 │   └── preview-template.html the frame every mock starts from (Current / Proposed panels, viewports, dark mode, notes)
-└── evals/                    4 test cases for the skill itself
+└── evals/                    5 test cases for the skill itself
 ```
 
 ## Requirements
@@ -79,13 +81,28 @@ Shortcuts:
 ```bash
 # <skill> is where ui-tweak is installed, e.g. ~/.claude/skills/ui-tweak for Claude Code
 python3 <skill>/scripts/serve.py .ui-tweak                         # start the preview server
-python3 <skill>/scripts/check_native.py .ui-tweak/<slug>/v2.html   # check a mock
+python3 <skill>/scripts/check_native.py .ui-tweak/<slug>/v2.html   # check a mock for browser-default controls
+python3 <skill>/scripts/check_tokens.py .ui-tweak/<slug>/v2.html --tokens <token file or folder>   # check it against the design system
 kill "$(python3 -c 'import json;print(json.load(open(".ui-tweak/.server"))["pid"])')"  # stop the server
 ```
 
 ## The in-app rule
 
 Every element in a mock (buttons, inputs, search boxes, dropdowns, date pickers, checkboxes, radios, toggles, sliders, tabs, tooltips, modals, everything) must look like **your app's own component**, never the browser default. `check_native.py` enforces this before each version is shown. If your app really has a styled native control (e.g. a checkbox built on `appearance: none`), mark it with `data-in-app="<why>"` and the checker skips it.
+
+## Design systems
+
+If your app has a design system, ui-tweak treats it as the source of truth. It finds it wherever it lives:
+
+- **in the repo:** a design doc such as `DESIGN.md` or `design.md` (any letter case, any folder), a `design-system/` or `packages/ui` folder, token JSON, Storybook
+- **in a published package:** e.g. `@acme/ui` in `node_modules`, with its token CSS/JSON and component types
+- **in external docs or Figma:** the agent reads the docs site, or Figma through a connector if your agent has one. Otherwise you export the variables to `.ui-tweak/tokens.json`.
+
+To skip the search, tell it where to look ("our design system is `@acme/ui`, docs at design.acme.dev").
+
+It saves what it found (sources, token files, components, rules) to `.ui-tweak/design-system.md` in your project, so later mocks reuse it.
+
+**Options stay inside the system.** The 2–3 options differ in layout, hierarchy, density and which existing components they use, never in invented colours, sizes or components. If your request needs something the system doesn't have, the agent says so and asks before using it. `check_tokens.py` enforces this before each version is shown. It flags colours and padding, margin, gap, radius and font-size values in the proposed design that aren't tokens. A deliberate exception is marked `data-off-system="<why>"` (HTML) or `/* off-system: <why> */` (CSS) and listed in the mock's notes.
 
 ## Security scan
 

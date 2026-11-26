@@ -38,6 +38,11 @@
      Scope them under .app so they never leak into the chrome.
      Dark theme: .app[data-theme="dark"] { --token: … }                           */
   .app { /* --color-primary: …; font-family: …; background: …; */ }
+
+  /* ---------- PROPOSED STYLES: CSS that only the proposed design needs ----------
+     Checked by scripts/check_tokens.py when the app has a design system: use its
+     tokens (var(--…)) or values from its scale. Mark a deliberate exception with
+     an off-system comment on the same line and list it in the notes.            */
 </style>
 </head>
 <body>
@@ -89,6 +94,13 @@
     <h2>What changes</h2>
     <ul>
       <li>{{CHANGE_1, e.g. CTA becomes full-width (w-full), radius 8 → 12px (--radius-lg)}}</li>
+    </ul>
+  </section>
+  <section>
+    <h2>Design system</h2>
+    <ul>
+      <li>{{PER_OPTION: components and tokens it uses, e.g. "A: Card, Button/primary, --space-4, --radius-lg"}}</li>
+      <li>{{OFF_SYSTEM: anything not in the design system and why, or "none"}}</li>
     </ul>
   </section>
   <section>

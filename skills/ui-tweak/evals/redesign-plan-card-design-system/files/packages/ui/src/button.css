@@ -1,0 +1,7 @@
+.acme-btn { font: inherit; border-radius: var(--radius-md); border: 1px solid transparent; cursor: pointer; }
+.acme-btn--md { padding: var(--space-2) var(--space-4); font-size: var(--text-md); }
+.acme-btn--sm { padding: var(--space-1) var(--space-3); font-size: var(--text-sm); }
+.acme-btn--primary { background: var(--color-primary); color: var(--color-bg); }
+.acme-btn--primary:hover { background: var(--color-primary-hover); }
+.acme-btn--secondary { background: var(--color-bg); color: var(--color-text); border-color: var(--color-border); }
+.acme-btn--ghost { background: transparent; color: var(--color-primary); }

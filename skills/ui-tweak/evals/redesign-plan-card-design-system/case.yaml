@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: redesign-plan-card-design-system
+context:
+  scaffold_script: place-files.sh
+expected_outcome: |
+  A design-system digest .ui-tweak/design-system.md names packages/ui (@acme/ui), its token file packages/ui/src/tokens.css, the Button/Card/Badge components and the DESIGN.md rules. A versioned mock .ui-tweak/<slug>/v1.html shows the current plan card and at least two options that differ in layout, hierarchy or density but use only @acme/ui components and --space-*/--radius-*/--color-*/--text-* tokens (no invented colours, sizes or radii), with a single primary Button per option (DESIGN.md rule). The mock's Design system notes list the components and tokens per option. check_tokens.py was run against the token file and reports no unacknowledged off-system values, and check_native.py reports none. src/ and packages/ are unchanged, a preview URL is given, and the agent asks for feedback before implementing.

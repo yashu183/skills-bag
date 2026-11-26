@@ -31,6 +31,8 @@ A browser-default element (a native `<select>`, `<input type="date">`, an unstyl
 <project>/.ui-tweak/
   pending                 ← slug of the mock under review (the approval gate)
   .server                 ← the running preview server's URL (written by serve.py)
+  design-system.md        ← digest of the app's design system, reused by later mocks
+  tokens.json             ← only when tokens come from outside the code (Figma/docs export)
   <short-slug>/
     v1.html
     v2.html               ← each round of feedback = a new version
@@ -42,18 +44,19 @@ If the repo uses git and `.ui-tweak/` isn't ignored, add it to `.gitignore`.
 ## Phase 1 — Understand (read-only)
 
 1. Find the component(s) or screen(s) the request touches.
-2. Find where the visual language lives: design tokens, CSS variables, Tailwind config, theme files, fonts, icon set. `references/mock-fidelity.md` says where to look per stack. Read it the first time you work in a repo.
-3. Take the component inventory (above): every element the change shows → the app's component or styling that provides it.
-4. Restate the request in one line ("Redesign the trial signup form: two columns on desktop, plan picker as cards instead of a dropdown"). Ask a question only if two readings would give visibly different designs. Otherwise pick one and show the other as an option.
+2. Find the design system, if the app has one: in the repo, in a published package, or in external docs/Figma. Follow `references/design-system.md`. It covers where to look, what to extract (tokens, components, usage rules), and saving a digest to `.ui-tweak/design-system.md`, which later mocks reuse. The design system is the source of truth for every mock.
+3. Find where the rest of the visual language lives: CSS variables, Tailwind config, theme files, fonts, icon set. `references/mock-fidelity.md` says where to look per stack. Read it the first time you work in a repo.
+4. Take the component inventory (above): every element the change shows → the app's component or styling that provides it. With a design system, that's its component and variant.
+5. Restate the request in one line ("Redesign the trial signup form: two columns on desktop, plan picker as cards instead of a dropdown"). Ask a question only if two readings would give visibly different designs. Otherwise pick one and show the other as an option.
 
 ## Phase 2 — First mock (v1)
 
 1. `mkdir -p .ui-tweak/<slug>` and copy the template: `cp <skill-dir>/assets/preview-template.html .ui-tweak/<slug>/v1.html`. Then fill in its placeholders with Edit.
 2. Write the slug into `.ui-tweak/pending`. That marks a review in progress, and the optional guard hook checks it (`references/gate-guard.md`).
 3. **Current** panel: rebuild the existing UI faithfully, with real colours, fonts, spacing, radii, copy and in-app controls. Use the actual token values, not lookalikes. A mock that doesn't look like their app makes the user judge the mock instead of the change.
-4. **Proposed** panel: the change, built the same way. When there's a real design choice (always for a redesign), show 2–3 labelled options in the template's option tabs. Don't add options just to fill the tabs.
-5. Fill in the notes: what changed, which tokens, classes and components it uses, and what the mock can't show.
-6. Run `check_native.py` on v1.html and fix what it finds.
+4. **Proposed** panel: the change, built the same way. When there's a real design choice (always for a redesign), show 2–3 labelled options in the template's option tabs. Don't add options just to fill the tabs. With a design system, every option stays **strictly inside it**: options differ in layout, hierarchy, density and which existing components and variants they use, never in invented colours, sizes or components (`references/design-system.md`, "Design options"). CSS that only the proposed design needs goes in the template's PROPOSED STYLES block.
+5. Fill in the notes: what changed, which tokens, classes and components it uses, and what the mock can't show. In "Design system", list per option the components and tokens it uses and anything off-system.
+6. Run `check_native.py` on v1.html and fix what it finds. With a design system, also run `python3 <skill-dir>/scripts/check_tokens.py <file> --tokens <each token source from the digest>` and fix what it flags.
 7. Start the preview server, or reuse it if it's already running. Run it in the background:
    `python3 <skill-dir>/scripts/serve.py <project>/.ui-tweak`
    It prints the URL, and if a server is already running for this folder it prints that URL and exits. Give the user `http://localhost:<port>/<slug>/latest`: that tab always shows the newest version and reloads itself when a new one appears. Open it for them (`open` on macOS, `xdg-open` on Linux). If you can't run a server, open the file directly instead.
@@ -72,7 +75,7 @@ Then apply only the requested changes to `v3.html` with Edit. Don't rewrite a ve
 For each new version:
 - Add a changelog line in the notes ("v3: badge moved into the header; CTA radius 8 → 12").
 - Drop options the user rejected, so the mock narrows toward a decision.
-- Run `check_native.py` on it.
+- Run `check_native.py` on it, and `check_tokens.py` when there's a design system.
 - Tell the user it's up: their `/latest` tab reloads on its own. Mention the version number.
 
 Stay in this phase until the user approves. "Looks good" or "nice" on its own is ambiguous, so confirm with "Want me to implement v3 now?" rather than guessing. Clear approvals: "implement", "ship it", "apply it", "go ahead and build it", "do option B of v2".
@@ -81,10 +84,10 @@ Stay in this phase until the user approves. "Looks good" or "nice" on its own is
 
 1. Delete `.ui-tweak/pending` first, so the guard (if installed) stops blocking edits.
 2. Apply the **approved version** (name it: "implementing v3, option B") with the smallest diff that achieves it.
-   - Use the app's components from the inventory, and reuse existing tokens, variables and utility classes. Don't hard-code a value that already has a token.
+   - Use the app's components from the inventory (the design system's, when there is one), and reuse existing tokens, variables and utility classes. Don't hard-code a value that already has a token.
    - Match the file's existing conventions (class ordering, styling approach, naming).
    - Touch only what the approved mock changed. Unrelated cleanup is a separate conversation.
-3. If the design needs a value with no token, or a component the app doesn't have, say so and ask how to handle it.
+3. If the design needs a value with no token, or a component the app doesn't have, say so and ask how to handle it. A design-system addition the user approved during review goes where the system keeps it (its token file or component library), not hard-coded in the screen.
 
 ## Phase 5 — Verify
 
