@@ -1,0 +1,25 @@
+[
+  {"query": "the tabs on our settings page look dated, can you redesign them? they're in src/pages/Settings.tsx", "should_trigger": true},
+  {"query": "recolor the stat tiles on the dashboard so revenue is green and churn is red, they're all grey right now", "should_trigger": true},
+  {"query": "move the logout button out of the sidebar and into the avatar dropdown in the top bar", "should_trigger": true},
+  {"query": "modernise the pricing cards in PricingTable.tsx, they feel very 2015", "should_trigger": true},
+  {"query": "our dark mode palette is muddy, everything blends together. can you rework it?", "should_trigger": true},
+  {"query": "make the primary button a bit bigger and rounder across the app", "should_trigger": true},
+  {"query": "the onboarding flow is 5 screens of walls of text. redesign it so it feels lighter", "should_trigger": true},
+  {"query": "can you tighten the spacing in the orders table? rows are way too tall", "should_trigger": true},
+  {"query": "swap the header nav to a hamburger menu on mobile, keep desktop as is", "should_trigger": true},
+  {"query": "/ui-tweak the empty state on the projects list", "should_trigger": true},
+  {"query": "the checkout form looks cramped on desktop, put the address fields in two columns", "should_trigger": true},
+  {"query": "make the login page look better, it's just a centered box right now", "should_trigger": true},
+
+  {"query": "add pagination to the /api/orders endpoint, it returns everything at once", "should_trigger": false},
+  {"query": "the date picker crashes when I clear the input, can you fix it? stack trace below", "should_trigger": false},
+  {"query": "scaffold a new Next.js app with Tailwind and a landing page for my side project", "should_trigger": false},
+  {"query": "refactor UserCard.tsx to use hooks instead of a class component, no visual changes", "should_trigger": false},
+  {"query": "write unit tests for the Modal component's open/close logic", "should_trigger": false},
+  {"query": "the Save button on the profile page doesn't submit the form, nothing happens on click", "should_trigger": false},
+  {"query": "rename the 'Get started' button label to 'Start free trial' everywhere", "should_trigger": false},
+  {"query": "set up Storybook for our component library", "should_trigger": false},
+  {"query": "why is our dashboard page slow to load? the bundle seems huge", "should_trigger": false},
+  {"query": "add an index on orders.customer_id, the dashboard query is slow", "should_trigger": false}
+]

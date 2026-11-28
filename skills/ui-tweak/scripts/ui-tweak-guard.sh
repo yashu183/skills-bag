@@ -27,5 +27,5 @@ case "$abs" in
 esac
 
 slug="$(head -n1 "$pending" 2>/dev/null)"
-echo "ui-tweak: a UI mock ('${slug}') is still under review, so app source edits are blocked. Keep changes in .ui-tweak/ until the user says 'implement'; then delete .ui-tweak/pending and edit the source." >&2
+echo "ui-tweak: a UI mock ('${slug}') is still under review, so app source edits are blocked. Keep changes in .ui-tweak/ until the user says 'implement'; then delete .ui-tweak/pending and edit the source. If the user has dropped this review or asked for unrelated work, delete .ui-tweak/pending first, tell them the review is closed, then make the edit." >&2
 exit 2

@@ -31,7 +31,7 @@ ui-tweak/
 │   └── ui-tweak-guard.sh     optional Claude Code PreToolUse hook: blocks source edits while a mock is under review
 ├── assets/
 │   └── preview-template.html the frame every mock starts from (Current / Proposed panels, viewports, dark mode, notes)
-└── evals/                    5 test cases for the skill itself
+└── evals/                    5 execution test cases + trigger-evals.json (should / shouldn't trigger queries)
 ```
 
 ## Requirements
@@ -49,11 +49,7 @@ A Claude Code hook that blocks source edits while a mock is under review. Setup:
 
 ### Ignore the mocks in git
 
-Mocks are written to `<project>/.ui-tweak/`. The agent adds it to `.gitignore` if needed; to do it yourself:
-
-```bash
-echo ".ui-tweak/" >> .gitignore
-```
+Mocks are written to `<project>/.ui-tweak/`. The agent puts a `.gitignore` containing `*` inside that folder, so git ignores it without any change to your repo's own `.gitignore`. Nothing to do on your side.
 
 ## Use
 

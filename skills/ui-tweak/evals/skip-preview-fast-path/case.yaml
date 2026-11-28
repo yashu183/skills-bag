@@ -3,4 +3,4 @@ name: skip-preview-fast-path
 context:
   scaffold_script: place-files.sh
 expected_outcome: |
-  The agent edits src/components/PricingCard.tsx directly: the button gets rounded-full and w-full (replacing rounded-md), with no other changes. No mock preview is created and no .ui-tweak/pending flag is left behind.
+  The ui-tweak skill (invoked with /ui-tweak) takes its fast path: no new mock is built (no .ui-tweak/pricing-cta/v2.html or any other new .ui-tweak/**/*.html), and the leftover review flag .ui-tweak/pending from the earlier, unapproved review is deleted before src/ is edited, while .ui-tweak/pricing-cta/v1.html is left in place. src/components/PricingCard.tsx is edited directly: the Get started button gets rounded-full and w-full (replacing rounded-md), with no other changes. The repo's own .gitignore is not created or modified.

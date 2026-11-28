@@ -4,6 +4,8 @@ __pycache__/
 
 # ui-tweak mocks and preview server state, if the skill is tried inside this repo
 .ui-tweak/
+# …but keep the eval fixtures that simulate an open review
+!skills/ui-tweak/evals/*/files/.ui-tweak/
 
 # skill-creator eval runs
 *-workspace/

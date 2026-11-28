@@ -1,6 +1,6 @@
 ---
 name: ui-tweak
-description: Preview-first workflow for any visual change to an existing app's UI, from a small tweak to a full redesign of a screen or flow. Builds a versioned HTML mock (v1, v2, …) from the app's real styles and in-app components, serves it on a live-reload local server, iterates with the user, and only edits application source after explicit approval ("implement", "ship it", "apply it"). Use this whenever the user asks to tweak, restyle, redesign, revamp, modernise, re-layout, move, resize, recolor or "make it look better" for any part of an existing interface (button, header, card, form, table, modal, nav, settings page, dashboard, onboarding, dark mode, spacing, typography), even if they don't ask for a preview, and when they type /ui-tweak. Not for backend work, brand-new apps from scratch, or pure UI bug fixes with no visual decision to make.
+description: Preview-first workflow for changing how an existing app's UI looks or is laid out. Use it for ANY such request, even one that reads like a quick direct code edit or names the exact file. It covers restyling, recoloring, resizing, moving or re-laying-out elements (e.g. put the logout action in the user menu, give the stat cards brand colours, switch a settings page to tabs, modernise the cards in a component file, rework a washed-out dark theme), up to redesigning whole screens or flows, and when the user types /ui-tweak. Instead of editing source first, it builds a versioned HTML mock from the app's real styles and in-app components, serves it on a live-reload local server, iterates with the user, and edits source only after they approve ("implement"). It also handles "skip the preview" / "just do it". Not for backend work, brand-new apps, non-visual refactors, or UI bug fixes with no design decision.
 allowed-tools: Read Grep Glob Write(.ui-tweak/**) Edit(.ui-tweak/**) WebFetch(domain:localhost)
 ---
 
@@ -10,7 +10,7 @@ The user wants to *see* a UI change and agree on it before any real code changes
 
 This covers everything from a one-button tweak to redesigning a whole screen. For a redesign, the mock is a full screen (or a few key screens/states), and offering 2–3 distinct directions as options is usually worth it.
 
-Fast path: if the user says "skip the preview", "just do it", or similar, go straight to Phase 4. Their call beats the workflow.
+Fast path: if the user says "skip the preview", "just do it", or similar, build no mock and go straight to Phase 4. Its step 1 still applies: delete any `.ui-tweak/pending` left from an earlier review before editing source. Their call beats the workflow.
 
 ## The one rule that keeps getting broken: in-app components only
 
@@ -29,6 +29,7 @@ A browser-default element (a native `<select>`, `<input type="date">`, an unstyl
 
 ```
 <project>/.ui-tweak/
+  .gitignore              ← contains `*`, so git ignores the whole folder
   pending                 ← slug of the mock under review (the approval gate)
   .server                 ← the running preview server's URL (written by serve.py)
   design-system.md        ← digest of the app's design system, reused by later mocks
@@ -39,7 +40,7 @@ A browser-default element (a native `<select>`, `<input type="date">`, an unstyl
     …
 ```
 
-If the repo uses git and `.ui-tweak/` isn't ignored, add it to `.gitignore`.
+Don't edit the repo's own `.gitignore`: it's a project file, and changing it before approval breaks the "no edits outside `.ui-tweak/`" promise. Phase 2 step 1 writes `.ui-tweak/.gitignore` instead, which keeps the mocks out of git without touching anything else.
 
 ## Phase 1 — Understand (read-only)
 
@@ -51,8 +52,8 @@ If the repo uses git and `.ui-tweak/` isn't ignored, add it to `.gitignore`.
 
 ## Phase 2 — First mock (v1)
 
-1. `mkdir -p .ui-tweak/<slug>` and copy the template: `cp <skill-dir>/assets/preview-template.html .ui-tweak/<slug>/v1.html`. Then fill in its placeholders with Edit.
-2. Write the slug into `.ui-tweak/pending`. That marks a review in progress, and the optional guard hook checks it (`references/gate-guard.md`).
+1. `mkdir -p .ui-tweak/<slug>`, write `*` into `.ui-tweak/.gitignore` if it isn't there yet, and copy the template: `cp <skill-dir>/assets/preview-template.html .ui-tweak/<slug>/v1.html`. Then fill in its placeholders with Edit.
+2. Write the slug into `.ui-tweak/pending`. That marks a review in progress, and the optional guard hook checks it (`references/gate-guard.md`). If `pending` already names a different slug, that review was left open: tell the user and replace it with the new slug.
 3. **Current** panel: rebuild the existing UI faithfully, with real colours, fonts, spacing, radii, copy and in-app controls. Use the actual token values, not lookalikes. A mock that doesn't look like their app makes the user judge the mock instead of the change.
 4. **Proposed** panel: the change, built the same way. When there's a real design choice (always for a redesign), show 2–3 labelled options in the template's option tabs. Don't add options just to fill the tabs. With a design system, every option stays **strictly inside it**: options differ in layout, hierarchy, density and which existing components and variants they use, never in invented colours, sizes or components (`references/design-system.md`, "Design options"). CSS that only the proposed design needs goes in the template's PROPOSED STYLES block.
 5. Fill in the notes: what changed, which tokens, classes and components it uses, and what the mock can't show. In "Design system", list per option the components and tokens it uses and anything off-system.
@@ -79,6 +80,15 @@ For each new version:
 - Tell the user it's up: their `/latest` tab reloads on its own. Mention the version number.
 
 Stay in this phase until the user approves. "Looks good" or "nice" on its own is ambiguous, so confirm with "Want me to implement v3 now?" rather than guessing. Clear approvals: "implement", "ship it", "apply it", "go ahead and build it", "do option B of v2".
+
+### When the review ends without approval
+
+`pending` must never outlive the review. If it does, the optional guard keeps blocking source edits in this project, including unrelated work. Delete `.ui-tweak/pending` (keep the mock files) as soon as any of these happens, and tell the user in one line that the review is closed and the mocks stay in `.ui-tweak/<slug>/`:
+- the user drops the idea ("never mind", "leave it as is", "forget the header");
+- the user moves on to work that needs source edits (a bug fix, a backend change, a different feature) without approving;
+- the user asks to edit the source directly mid-review ("just edit it").
+
+If they come back to the mock later, write the slug into `pending` again and carry on from the latest version.
 
 ## Phase 4 — Implement (only after approval)
 

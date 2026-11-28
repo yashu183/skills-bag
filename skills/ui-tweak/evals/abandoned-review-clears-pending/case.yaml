@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: abandoned-review-clears-pending
+context:
+  scaffold_script: place-files.sh
+expected_outcome: |
+  The ui-tweak skill (invoked with /ui-tweak) closes the open review without implementing it: .ui-tweak/pending is deleted, .ui-tweak/pricing-cta/v1.html is kept, no new mock version is created, and PricingCard.tsx is not restyled. The agent tells the user the review is closed and the mock is kept. It then makes the unrelated edit in src/Pricing.tsx: the Team plan price becomes 35 and "API access" is added to the Scale plan's features, with no other changes.
